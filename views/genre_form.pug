@@ -1,0 +1,22 @@
+extends layout
+
+
+block content
+
+  h1 Create Genre
+
+  form(method="POST")
+    div(class="form-group")
+      label(for="genre_name") Genre name: 
+      input(
+              id="genre_name"
+              name="genre_name"
+              value=genre === undefined ? "" : genre.name
+              placeholder="Fantasy"
+              require
+              )
+    input(type="submit" value="Create Genre" class="btn btn-primary")
+    if errors
+      ul
+         each err in errors
+           li(style="color: red;")= err.msg

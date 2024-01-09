@@ -1,0 +1,65 @@
+extends layout
+
+
+block content
+
+  h1= title
+
+  form(method="POST")
+    div(class="form-group")
+      label(for="title") Title: 
+      input(
+        required
+        value=book ===undefined ? "" : book.title
+        type="text"
+        class="form-control"
+        id="title"
+        name="book_title")
+    div(class="form-group")
+      label(for="author") Author:
+      select(id="author" required class="form-control" name="author")
+        option(value="" ) --Please select an author--
+        for author in authors
+          if book
+            if author._id.toString()===book.author._id.toString()
+              option(value=author._id selected) #{author.name}
+            else
+              option(value=author._id) #{author.name}
+          else
+            option(value=author._id) #{author.name} 
+    div(class="form-group")
+      label Genre:
+      div
+        for genre in genres
+          div(style='display: inline; padding-right:10px;')
+            if genre.checked
+              input.checkbox-input(type='checkbox', name='genre', id=genre._id, value=genre._id, checked)
+            else
+              input.checkbox-input(type='checkbox', name='genre', id=genre._id, value=genre._id)
+            label(for=genre._id) &nbsp;#{genre.name}
+    div(class="form-group")
+      label(for="summary") Summary:
+      textarea(
+        id="summary"
+        class="form-control"
+        required
+        value=book===undefined ? "" : book.summary)
+    div(class="form-group")
+      label(for="isbn") ISBN:
+      input(
+        type="text"
+        id="isbn"
+        name="isbn"
+        value=book===undefined ? "" : book.isbn
+        class="form-control"
+        required
+        )
+      if errors && errors.length
+          ul
+            each error in errors
+              li(style="color:red;")= error.msg
+      
+    input(type="submit" class="btn btn-primary" value="Create book")
+
+
+    
