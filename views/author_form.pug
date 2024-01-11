@@ -24,11 +24,24 @@ block content
         type="text" )
     div(class="form-group")
       label(for="birth_date") Birth Date: 
-      input(placeholder='dd/mm/yyyy' required class="form-control" type="date" id="birth_date" name="birth_date")
+      input(
+        placeholder='dd/mm/yyyy'
+        required
+        class="form-control"
+        type="date"
+        id="birth_date"
+        name="birth_date"
+        value=author === undefined ? "" : author.date_of_birth)
     div(class="form-group")
       label(for="death_date") Death date: 
-      input( class="form-control" type="date" id="death_date" name="death_date")
-    input(type="submit" placeholder='dd/mm/yyyy' class="btn btn-primary" value="Create author")
+      input(
+        class="form-control"
+        type="date"
+        id="death_date"
+        name="death_date"
+        value=author.date_of_death===undefined ? "" : author.date_of_death
+        )
+    input(type="submit" class="btn btn-primary" value="Create author")
 
   if errors
       ul
