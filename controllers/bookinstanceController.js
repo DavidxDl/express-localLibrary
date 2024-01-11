@@ -106,10 +106,57 @@ exports.bookinstance_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display BookInstance update form on GET.
 exports.bookinstance_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance update GET");
+  const [bookinstance, allBooks] = await Promise.all([
+    BookInstance.findById(req.params.id).exec(),
+    Book.find().sort({ title: 1 }).exec(),
+  ]);
+  if (bookinstance === null) res.redirect("/cataog/bookinstances");
+
+  res.render("bookinstance_form", {
+    title: "Update Bookinstance",
+    bookinstance: bookinstance,
+    book_list: allBooks,
+    selected_book: bookinstance.book,
+  });
 });
 
 // Handle bookinstance update on POST.
-exports.bookinstance_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance update POST");
-});
+exports.bookinstance_update_post = [
+  body("book", "Book must be specified").trim().isLength({ min: 1 }).escape(),
+  body("imprint", "Imprint must be specified")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("status").escape(),
+  body("due_back", "Invalid date")
+    .optional({ values: "falsy" })
+    .isISO8601()
+    .toDate(),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+    const bookinstance = new BookInstance({
+      book: req.body.book,
+      imprint: req.body.imprint,
+      due_back: req.body.due_back,
+      status: req.body.status,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      const allBooks = await Book.find({}, "title").sort({ title: 1 }).exec();
+
+      res.render("bookinstance_form", {
+        title: "Bookintance Form",
+        book_list: allBooks,
+        selected_book: bookinstance.book._id,
+        bookinstance: bookinstance,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      await BookInstance.findByIdAndUpdate(req.params.id, bookinstance, {});
+      res.redirect(bookinstance.url);
+    }
+  }),
+];
