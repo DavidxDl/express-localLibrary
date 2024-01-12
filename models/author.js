@@ -28,6 +28,12 @@ AuthorSchema.virtual("date_of_birth_formatted").get(function () {
     DateTime.DATE_MED,
   );
 });
+AuthorSchema.virtual("date_of_birth_YYYY").get(function () {
+  return DateTime.fromJSDate(this.date_of_birth).toISODate();
+});
+AuthorSchema.virtual("date_of_death_YYYY").get(function () {
+  return DateTime.fromJSDate(this.date_of_death).toISODate();
+});
 AuthorSchema.virtual("date_of_death_formatted").get(function () {
   return this.date_of_death
     ? DateTime.fromJSDate(this.date_of_death).toLocaleString(DateTime.DATE_MED)
@@ -35,13 +41,16 @@ AuthorSchema.virtual("date_of_death_formatted").get(function () {
 });
 
 AuthorSchema.virtual("lifespan").get(function () {
-    const birth = this.date_of_birth;
-    const death =  this.date_of_death;
-    const lifespan = death === undefined 
-        ? DateTime.fromJSDate(birth).toLocaleString(DateTime.DATE_MED)
-        :  DateTime.fromJSDate(birth).toLocaleString(DateTime.DATE_MED) + " - " + DateTime.fromJSDate(death).toLocaleString(DateTime.DATE_MED); 
-    return lifespan;
-  
+  const birth = this.date_of_birth;
+  const death = this.date_of_death;
+  const lifespan =
+    death === undefined
+      ? DateTime.fromJSDate(birth).toLocaleString(DateTime.DATE_MED)
+      : DateTime.fromJSDate(birth).toLocaleString(DateTime.DATE_MED) +
+        " - " +
+        DateTime.fromJSDate(death).toLocaleString(DateTime.DATE_MED);
+
+  return lifespan;
 });
 
 module.exports = mongoose.model("Author", AuthorSchema);
